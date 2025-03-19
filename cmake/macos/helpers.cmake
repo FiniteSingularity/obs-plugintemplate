@@ -42,8 +42,8 @@ function(set_target_properties_plugin target)
     )
   endif()
 
-  if(TARGET plugin-support)
-    target_link_libraries(${target} PRIVATE plugin-support)
+  if(TARGET ${CMAKE_PROJECT_NAME}-support)
+    target_link_libraries(${target} PRIVATE ${CMAKE_PROJECT_NAME}-support)
   endif()
 
   target_install_resources(${target})
