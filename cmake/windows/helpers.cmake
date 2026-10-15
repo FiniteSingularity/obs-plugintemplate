@@ -23,9 +23,6 @@ function(set_target_properties_plugin target)
   set_target_properties(${target} PROPERTIES VERSION 0 SOVERSION ${PLUGIN_VERSION})
 
   install(TARGETS ${target} RUNTIME DESTINATION "${target}" LIBRARY DESTINATION "${target}")
-  install(TARGETS ${target} RUNTIME DESTINATION "${target}_legacy/bin/64bit" LIBRARY DESTINATION "${target}_legacy/bin/64bit")
-  install(TARGETS ${target} RUNTIME DESTINATION "${target}_portable_legacy/obs-plugins/64bit" LIBRARY DESTINATION "${target}_portable_legacy/obs-plugins/64bit")
-
   install(
     FILES "$<TARGET_PDB_FILE:${target}>"
     CONFIGURATIONS RelWithDebInfo Debug Release
@@ -33,19 +30,23 @@ function(set_target_properties_plugin target)
     OPTIONAL
   )
 
-  install(
-    FILES "$<TARGET_PDB_FILE:${target}>"
-    CONFIGURATIONS RelWithDebInfo Debug Release
-    DESTINATION "${target}_legacy/bin/64bit"
-    OPTIONAL
-  )
+  if(ENABLE_LEGACY_BUILD)
+    install(TARGETS ${target} RUNTIME DESTINATION "${target}_legacy/bin/64bit" LIBRARY DESTINATION "${target}_legacy/bin/64bit")
+    install(
+      FILES "$<TARGET_PDB_FILE:${target}>"
+      CONFIGURATIONS RelWithDebInfo Debug Release
+      DESTINATION "${target}_legacy/bin/64bit"
+      OPTIONAL
+    )
 
-  install(
-    FILES "$<TARGET_PDB_FILE:${target}>"
-    CONFIGURATIONS RelWithDebInfo Debug Release
-    DESTINATION "${target}_portable_legacy/obs-plugins/64bit"
-    OPTIONAL
-  )
+    install(TARGETS ${target} RUNTIME DESTINATION "${target}_portable_legacy/obs-plugins/64bit" LIBRARY DESTINATION "${target}_portable_legacy/obs-plugins/64bit")
+    install(
+      FILES "$<TARGET_PDB_FILE:${target}>"
+      CONFIGURATIONS RelWithDebInfo Debug Release
+      DESTINATION "${target}_portable_legacy/obs-plugins/64bit"
+      OPTIONAL
+    )
+  endif()
 
   if(TARGET plugin-support)
     target_link_libraries(${target} PRIVATE plugin-support)
@@ -94,11 +95,14 @@ function(target_install_resources target)
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}/data" USE_SOURCE_PERMISSIONS)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}/data" COMPONENT Runtime)
 
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}_legacy/data" USE_SOURCE_PERMISSIONS)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}_legacy/data" COMPONENT Runtime)
+    if (ENABLE_LEGACY_BUILD)
+      install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}_legacy/data" USE_SOURCE_PERMISSIONS)
+      install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}_legacy/data" COMPONENT Runtime)
 
-    install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}_portable_legacy/data/obs-plugins/${target}" USE_SOURCE_PERMISSIONS)
-    install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}_portable_legacy/data/obs-plugins/${target}" COMPONENT Runtime)
+      install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}_portable_legacy/data/obs-plugins/${target}" USE_SOURCE_PERMISSIONS)
+      install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}_portable_legacy/data/obs-plugins/${target}" COMPONENT Runtime)
+    endif()
+    
     add_custom_command(
       TARGET ${target}
       POST_BUILD
