@@ -70,25 +70,34 @@ function Package {
     Compress-Archive -Force @CompressArgs
     Log-Group
 
-    Log-Group "Archiving ${ProductName} Legacy..."
-    $CompressArgs = @{
-        Path = (Get-ChildItem -Path "${ProjectRoot}/release/${Configuration}/${ProductName}_legacy" -Exclude "${OutputNameLegacy}*.*")
-        CompressionLevel = 'Optimal'
-        DestinationPath = "${ProjectRoot}/release/${OutputNameLegacy}.zip"
-        Verbose = ($Env:CI -ne $null)
-    }
-    Compress-Archive -Force @CompressArgs
-    Log-Group
+    $LegacyPath = "${ProjectRoot}/release/${Configuration}/${ProductName}_legacy"
 
-    Log-Group "Archiving ${ProductName} Portable Legacy..."
-    $CompressArgs = @{
-        Path = (Get-ChildItem -Path "${ProjectRoot}/release/${Configuration}/${ProductName}_portable_legacy" -Exclude "${OutputNamePortableLegacy}*.*")
-        CompressionLevel = 'Optimal'
-        DestinationPath = "${ProjectRoot}/release/${OutputNamePortableLegacy}.zip"
-        Verbose = ($Env:CI -ne $null)
+    $PortableLegacyPath = "${ProjectRoot}/release/${Configuration}/${ProductName}_portable_legacy"
+
+    if ( Test-Path -Path $LegacyPath -PathType Container ) {
+        Log-Group "Archiving ${ProductName} Legacy..."
+        $CompressArgs = @{
+            Path = (Get-ChildItem -Path $LegacyPath -Exclude "${OutputNameLegacy}*.*")
+            CompressionLevel = 'Optimal'
+            DestinationPath = "${ProjectRoot}/release/${OutputNameLegacy}.zip"
+            Verbose = ($Env:CI -ne $null)
+        }
+        Compress-Archive -Force @CompressArgs
+        Log-Group
     }
-    Compress-Archive -Force @CompressArgs
-    Log-Group
+
+    $PortableLegacyPath = "${ProjectRoot}/release/${Configuration}/${ProductName}_portable_legacy"
+    if ( Test-Path -Path $PortableLegacyPath -PathType Container ) {
+        Log-Group "Archiving ${ProductName} Portable Legacy..."
+        $CompressArgs = @{
+            Path = (Get-ChildItem -Path $PortableLegacyPath -Exclude "${OutputNamePortableLegacy}*.*")
+            CompressionLevel = 'Optimal'
+            DestinationPath = "${ProjectRoot}/release/${OutputNamePortableLegacy}.zip"
+            Verbose = ($Env:CI -ne $null)
+        }
+        Compress-Archive -Force @CompressArgs
+        Log-Group
+    }
 }
 
 Package
