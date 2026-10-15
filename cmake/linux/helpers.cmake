@@ -26,7 +26,7 @@ function(set_target_properties_plugin target)
   # OBS 33 and later
   install(TARGETS ${target} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-modules/plugins COMPONENT Modern)
 
-  if(ENABLE_LEGACY_BUILD)
+  if(ENABLE_BUILD_LEGACY)
     # OBS pre-33 (loaded as legacy in OBS 33)
     install(TARGETS ${target} LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/obs-plugins COMPONENT Legacy)
   endif()
@@ -77,7 +77,7 @@ function(target_install_resources target)
       COMPONENT Modern
     )
 
-    if(ENABLE_LEGACY_BUILD)
+    if(ENABLE_BUILD_LEGACY)
       install(
         DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/"
         DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/obs-plugins/${target}
@@ -113,7 +113,7 @@ function(target_add_resource target resource)
     COMPONENT Modern
   )
 
-  if(ENABLE_LEGACY_BUILD)
+  if(ENABLE_BUILD_LEGACY)
     install(FILES "${resource}" DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/obs/obs-plugins/${target} COMPONENT Legacy)
   endif()
 

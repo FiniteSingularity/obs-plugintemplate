@@ -30,7 +30,7 @@ function(set_target_properties_plugin target)
     OPTIONAL
   )
 
-  if(ENABLE_LEGACY_BUILD)
+  if(ENABLE_BUILD_LEGACY)
     install(TARGETS ${target} RUNTIME DESTINATION "${target}_legacy/bin/64bit" LIBRARY DESTINATION "${target}_legacy/bin/64bit")
     install(
       FILES "$<TARGET_PDB_FILE:${target}>"
@@ -95,7 +95,7 @@ function(target_install_resources target)
     install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}/data" USE_SOURCE_PERMISSIONS)
     install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}/data" COMPONENT Runtime)
 
-    if (ENABLE_LEGACY_BUILD)
+    if (ENABLE_BUILD_LEGACY)
       install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/data/" DESTINATION "${target}_legacy/data" USE_SOURCE_PERMISSIONS)
       install(FILES "${CMAKE_CURRENT_SOURCE_DIR}/manifest.json" DESTINATION "${target}_legacy/data" COMPONENT Runtime)
 

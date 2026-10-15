@@ -10,7 +10,7 @@
       "name": "template",
       "hidden": true,
       "cacheVariables": {
-        "ENABLE_LEGACY_BUILD": false,
+        "ENABLE_BUILD_LEGACY": true,
         "ENABLE_FRONTEND_API": false,
         "ENABLE_QT": false
       }
